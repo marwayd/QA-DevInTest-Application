@@ -1,5 +1,5 @@
 const { Given, Then } = require('cucumber');
-const { By } = require('selenium-webdriver');
+const { By,until } = require('selenium-webdriver');
 var assert = require("chai").assert;
 const World = require('../support/world');
 const Selectors = require('../support/utils/selectors');
@@ -50,7 +50,21 @@ Then(/^I wait (\d+) seconds$/, function (seconds) {
   return World.driver.sleep(1000*seconds);
 });
 Then(/^I can see "([^"]*)" heading$/, function (financeHeading) {
-  return World.driver.findElement(By.id(Selectors.FinanceHeading)).getText().then(heading=>{
-    assert.equal(heading,'Banking and finance jobs');
-  })
+  return World.driver.wait(until.titleIs('Banking and finance jobs'),1000).
+      then(()=>{
+        return World.driver.findElement(By.id(Selectors.FinanceHeading)).getText().then(heading=>{
+             assert.equal(heading,'Banking and finance jobs');
+        }).
+      then(()=>{
+          return World.driver.findElement({className:'lister__view-details'}).click().then(()=>{
+              return World.driver.wait(until.elementLocated({css:'li.job-actions__action.job-actions__action--applylink > a'})).then(()=>{
+                  return World.driver.findElement({css:'li.job-actions__action.job-actions__action--applylink > a'}).getText().then((buttonText)=>{
+                      assert.equal(buttonText,'Apply')
+                  })
+              })
+          });
+      });
+  }).catch((error)=>{
+      console.log('Something went wrong'+error)
+  });
 });
