@@ -68,3 +68,18 @@ Then(/^I can see "([^"]*)" heading$/, function (financeHeading) {
       console.log('Something went wrong'+error)
   });
 });
+When(/^I click on "([^"]*)" link$/, function (link) {
+    let JOB_SEARCH_SELECTOR = "//*[@id='primary-nav']/div/ul/li[2]/a";
+    return World.driver.findElement({xpath:JOB_SEARCH_SELECTOR}).click().then(()=>{
+        console.log('success');
+    });
+});
+Then(/^I can see search page$/, function () {
+    return World.driver.wait(until.elementLocated({xpath: "//*[@id='main']/div/div/div[1]/div[1]/ul/li[2]/a"})).then(()=>{
+        return World.driver.findElement({xpath: "//*[@id='main']/div/div/div[1]/div[1]/ul/li[2]/a"}).then(()=>{
+                console.log('Search tab clicked');
+            });
+    }).catch(error=>{
+        console.log('Something went wrong',error);
+    })
+});

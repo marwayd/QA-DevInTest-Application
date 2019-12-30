@@ -33,4 +33,6 @@ Feature: Jobs page
 #    And I wait 2 seconds
     Then I can see "Banking and finance jobs" heading
     #Searching for a job correctly displays relevant search results.
+    When I click on "Find a job" link
+    Then I can see search page
     #Ensuring all the links in the footer are functional
