@@ -35,4 +35,5 @@ Feature: Jobs page
     #Searching for a job correctly displays relevant search results.
     When I click on "Find a job" link
     Then I can see search page
+    And I search with "Engineer" keyword
     #Ensuring all the links in the footer are functional

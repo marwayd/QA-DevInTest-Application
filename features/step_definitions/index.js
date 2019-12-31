@@ -18,10 +18,14 @@ Then(/^I should see the navigation bar$/, () => {
   });
 });
 Given(/^User can see job page title$/,function () {
-  return World.driver.getTitle().then((value => {
-    //assert.equal(value,"economist Job page");
-  })).catch(function (err) {
-    console.log('Any Error',err)
+    return  World.driver.sleep(1000*3).then(()=>{
+        return World.driver.getTitle().then((value => {
+            if(value!==''){
+                assert.equal(value,"economist Job page");
+            }
+        }))
+    }).catch(function (err) {
+        console.log('Something went wrong',err);
   });
 });
 When(/^I click on SignIn link$/, function () {
@@ -65,7 +69,7 @@ Then(/^I can see "([^"]*)" heading$/, function (financeHeading) {
           });
       });
   }).catch((error)=>{
-      console.log('Something went wrong'+error)
+      throw new Error('Failed because',error);
   });
 });
 When(/^I click on "([^"]*)" link$/, function (link) {
@@ -76,10 +80,21 @@ When(/^I click on "([^"]*)" link$/, function (link) {
 });
 Then(/^I can see search page$/, function () {
     return World.driver.wait(until.elementLocated({xpath: "//*[@id='main']/div/div/div[1]/div[1]/ul/li[2]/a"})).then(()=>{
-        return World.driver.findElement({xpath: "//*[@id='main']/div/div/div[1]/div[1]/ul/li[2]/a"}).then(()=>{
-                console.log('Search tab clicked');
-            });
+        return World.driver.findElement({xpath: "//*[@id='main']/div/div/div[1]/div[1]/ul/li[2]/a"}).click();
     }).catch(error=>{
-        console.log('Something went wrong',error);
+        throw new Error('Failed because',error);
     })
+});
+Then(/^I search with "([^"]*)" keyword$/, function (keyword) {
+    return World.driver.findElement({id:"keyword"}).sendKeys(keyword).then(()=>{
+        return World.driver.findElement({css:"input.button--brand"}).click().then(()=>{
+            return World.driver.wait(until.elementLocated({id:"searching"})).then(()=>{
+                return World.driver.findElement({id:"searching"}).getText().then((searchResult)=>{
+                    assert.isTrue(searchResult.includes("jobs using the term 'Engineer'"));
+                });
+            });
+        });
+    }).catch((error)=>{
+        throw new Error('Failed because',error);
+    });
 });
